@@ -1,1 +1,4 @@
-# Mwsu-2D-Gaming-Tran
+### Contact Information:
+### Johnny Tran
+### jbtran2973@hotmail.com
+![My pic](https://avatars3.githubusercontent.com/u/18449525?v=3&s=260)
