@@ -1,11 +1,12 @@
 var mainState = {
 
-    preload: function() {
-        game.load.image('player', 'assets/player.png');
+    preload: function () {
+        game.load.image('player', 'assets/player_icon.png');
         game.load.image('wallV', 'assets/wallVertical.png');
         game.load.image('wallH', 'assets/wallHorizontal.png');
-        game.load.image('coin', 'assets/coin.png');
-        game.load.image('enemy', 'assets/enemy.png');
+        game.load.image('coin', 'assets/gold_coin.png');
+        game.load.image('enemy', 'assets/snail_icon.png');
+        game.load.image('gem', 'assets/gem.png');
     },
 
     create: function() { 
@@ -25,9 +26,20 @@ var mainState = {
         this.coin = game.add.sprite(60, 140, 'coin');
         game.physics.arcade.enable(this.coin); 
         this.coin.anchor.setTo(0.5, 0.5);
+        
+        this.gem = game.add.sprite(340, 300, 'gem');
+        game.physics.arcade.enable(this.gem); 
+        this.gem.anchor.setTo(0.5, 0.5);
 
         this.scoreLabel = game.add.text(30, 30, 'score: 0', { font: '18px Arial', fill: '#ffffff' });
         this.score = 0;
+        
+        this.deathLabel = game.add.text(380, 290, 'Deaths: 0', { font: '18px Arial', fill: '#ffffff' });
+        this.death = 0;
+        
+        this.timeLabel = game.add.text(390, 30, 'Time: 120', { font: '18px Arial', fill: '#ffffff' });
+        this.time = 120;
+        game.time.events.loop(1000, this.countdown, this);
 
         this.enemies = game.add.group();
         this.enemies.enableBody = true;
@@ -39,15 +51,28 @@ var mainState = {
         game.physics.arcade.collide(this.player, this.walls);
         game.physics.arcade.collide(this.enemies, this.walls);
         game.physics.arcade.overlap(this.player, this.coin, this.takeCoin, null, this);
+        game.physics.arcade.overlap(this.player, this.gem, this.takeGem, null, this);
         game.physics.arcade.overlap(this.player, this.enemies, this.playerDie, null, this);
 
         this.movePlayer(); 
 
         if (!this.player.inWorld) {
-            this.playerDie();
+            this.resetPlayer();
         }
     },
 
+    resetPlayer: function() {
+        var playerPosition = [
+            {x: game.width/4, y: game.height/2},
+            {x: game.width * 3 / 4, y: game.height/2}, 
+            {x: game.width/2, y: game.height/2},
+            {x: 40, y: 270}, {x: 430, y: 270}
+        ];
+        
+        var newPosition = game.rnd.pick(playerPosition);
+        this.player.reset(newPosition.x, newPosition.y);
+    },
+    
     movePlayer: function() {
         if (this.cursor.left.isDown) {
             this.player.body.velocity.x = -200;
@@ -64,18 +89,35 @@ var mainState = {
         }      
     },
 
+    countdown: function() {
+        this.time -= 1;
+        if(this.time <= 0){
+            game.state.start('main');
+            console.log('dun');
+        }
+        this.timeLabel.text = 'Time: ' + this.time;
+    },
+    
     takeCoin: function(player, coin) {
         this.score += 5;
         this.scoreLabel.text = 'score: ' + this.score;
 
         this.updateCoinPosition();
     },
+    
+    takeGem: function(player, gem) {
+        this.score += 10;
+        this.scoreLabel.text = 'score: ' + this.score;
+
+        this.updateGemPosition();
+    },
 
     updateCoinPosition: function() {
-        var coinPosition = [
-            {x: 140, y: 60}, {x: 360, y: 60}, 
+        var coinPosition = [ 
+            {x: game.width/4, y: 220},
+            {x: game.width * 3 / 4, y: 220},
             {x: 60, y: 140}, {x: 440, y: 140}, 
-            {x: 130, y: 300}, {x: 370, y: 300} 
+            {x: 40, y: 300}, {x: 460, y: 300} 
         ];
 
         for (var i = 0; i < coinPosition.length; i++) {
@@ -86,6 +128,22 @@ var mainState = {
 
         var newPosition = game.rnd.pick(coinPosition);
         this.coin.reset(newPosition.x, newPosition.y);
+    },
+    
+    updateGemPosition: function() {
+        var gemPosition = [
+            {x: 140, y: 60}, {x: 360, y: 60},
+            {x: 150, y: 300},{x: 340, y: 300}
+        ];
+
+        for (var i = 0; i < gemPosition.length; i++) {
+            if (gemPosition[i].x == this.coin.x) {
+                gemPosition.splice(i, 1);
+            }
+        }
+
+        var newPosition = game.rnd.pick(gemPosition);
+        this.gem.reset(newPosition.x, newPosition.y);
     },
 
     addEnemy: function() {
@@ -102,6 +160,10 @@ var mainState = {
         enemy.body.bounce.x = 1;
         enemy.checkWorldBounds = true;
         enemy.outOfBoundsKill = true;
+    },
+    
+    removeEnemy: function() {
+        this.enemies.callAll('kill');
     },
 
     createWorld: function() {
@@ -124,8 +186,16 @@ var mainState = {
         this.walls.setAll('body.immovable', true);
     },
 
-    playerDie: function() {
-        game.state.start('main');
+    playerDie: function(player, enemy) {
+        this.death += 1;
+        this.deathLabel.text = 'Death: ' + this.death;
+        /*this.player.reset(game.width/2,game.height/2);
+        this.removeEnemy();*/
+        console.log(player);
+        console.log(enemy);
+        enemy.animations.play('die');
+        enemy.kill();
+        enemy.destroy();
     },
 };
 
