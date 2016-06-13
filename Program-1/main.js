@@ -1,7 +1,7 @@
 var mainState = {
 
     preload: function () {
-        game.load.image('player', 'assets/player_icon.png');
+        game.load.image('player', 'assets/player_icon.PNG');
         game.load.image('wallV', 'assets/wallVertical.png');
         game.load.image('wallH', 'assets/wallHorizontal.png');
         game.load.image('coin', 'assets/gold_coin.png');
