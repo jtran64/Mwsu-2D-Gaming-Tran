@@ -18,7 +18,7 @@ SpaceHipster.MainMenu.prototype = {
     this.background.autoScroll(-20, 0);
 
     //start game text
-    var text = "Tap to begin";
+    var text = "Press Space to begin";
     var style = { font: "30px Arial", fill: "#fff", align: "center" };
     var t = this.game.add.text(this.game.width/2, this.game.height/2, text, style);
     t.anchor.set(0.5);
@@ -31,7 +31,7 @@ SpaceHipster.MainMenu.prototype = {
     h.anchor.set(0.5);
   },
   update: function() {
-    if(this.game.input.activePointer.justPressed()) {
+    if(this.game.input.keyboard.isDown(Phaser.Keyboard.SPACEBAR)) {
       this.game.state.start('Game');
     }
   }
