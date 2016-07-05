@@ -178,119 +178,6 @@ var playState = {
         game.state.start('menu');
     },
 };
-/*
-var player = function (index, game,proxyServer) {
-    
-    var x;                      // x coord
-    var y;                      // y coord
-    
-    var player_id;
-    
-    var alive;                  // player alive or dead
-    var state;                  // state info about player
-    var proxy;                  // reference to proxy server
-    
-    var tint;                   // player tint
-
-    var upKey;                  //references to movement keys
-    var downKey;
-    var leftKey;
-    var rightKey;
-
-    var health;                 // player health 
-    var startTime;              // starting game time     
- 
-	
-    function init(index, game,proxyServer){
-    
-        player_id = index;
-    
-        proxy = proxyServer;
-    
-        sprite = game.add.sprite(x, y, 'dude');
-    
-        upKey = game.input.keyboard.addKey(Phaser.Keyboard.UP);
-        downKey = game.input.keyboard.addKey(Phaser.Keyboard.DOWN);
-        leftKey = game.input.keyboard.addKey(Phaser.Keyboard.LEFT);
-        rightKey = game.input.keyboard.addKey(Phaser.Keyboard.RIGHT);
-
-        health = 30;
-	    
-        state = {};
-        x = 0;
-        y = 0;
-        alive = true;
-        tint = Math.random() * 0xffffff;
-        sprite.tint = tint;
-        sprite.id = index;
-        state.alive = true;
-        startTime = game.time.time;
-        
-    };
-    
-    // Part of your assignment 
-    // you need to 
-    function updateState (enemy_id,state){
-        if(game.time.time - startTime > 2000){
-            console.log(game.time.time);
-            for(s in state){
-                console.log(state[s]);
-            }
-            startTime = game.time.time;
-        }
-    };
-
-    function update() {
-        state.tint = tint;
-        state.x = sprite.x;
-        state.y = sprite.y;
-        state.alive = alive;
-        state.health = health;
-    
-        // Send your own state to server on your update and let
-        // it do whatever with it. 
-        proxy.handleState(player_id,state);
-
-        if (upKey.isDown)
-        {
-            sprite.y-=3;
-        }
-        else if (downKey.isDown)
-        {
-            sprite.y+=3;
-        }
-
-        if (leftKey.isDown)
-        {
-            sprite.x-=3;
-        }
-        else if (rightKey.isDown)
-        {
-            sprite.x+=3;
-        } 
-    
-        old_x = sprite.x;
-        old_y = sprite.y;
-    };
-    
-    function render() {
-        game.debug.text( "This is debug text", 100, 380 );
-    };
-
-    function kill() {
-        alive = false;
-        sprite.kill();
-    };
-    
-    init(index, game,proxyServer);
-    
-    return {
-        render : render,
-        updateState : updateState,
-        update : update,
-        kill : kill
-    };
-};*/
 
 function player(index, game, proxyServer) {
 	this.player_id = index;
@@ -306,7 +193,7 @@ function player(index, game, proxyServer) {
 
     this.health = 30;
 	    
-    this.state = {}//= {alive:true,tint_val:this.tint_val,x:this.x,y:this.y};
+    this.state = {};
     this.x = 0;
     this.y = 0;
     this.alive = true;
@@ -319,10 +206,8 @@ function player(index, game, proxyServer) {
 
 player.prototype.update = function() {
 		this.state.tint = this.tint;
-		//this.sprite.tint = this.tint;
         this.state.x = this.sprite.x;
         this.state.y = this.sprite.y;
-		//console.log(this.state.x, this.state.y);
         this.state.alive = this.alive;
         this.state.health = this.health;
     
@@ -362,18 +247,16 @@ player.prototype.render = function() {
 };
 
 player.prototype.updateState = function(enemy_id,state) {
-	//if(game.time.time - this.startTime > 2000){
-            console.log(game.time.time);
-            for(s in state){
-                console.log(state[s]);
-				this.state[s] = state[s];
-				this.sprite.x = this.state.x;
-				this.sprite.y = this.state.y;
-				this.sprite.tint = this.state.tint;
-            }
+    console.log(game.time.time);
+    for(s in state){
+		console.log(state[s]);
+		this.state[s] = state[s];
+		this.sprite.x = this.state.x;
+		this.sprite.y = this.state.y;
+		this.sprite.tint = this.state.tint;
+    }
 			
             this.startTime = game.time.time;
-        //}	
 };
 
 player.prototype.init = function(index, game,proxyServer, state) {
